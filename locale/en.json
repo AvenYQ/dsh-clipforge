@@ -1,0 +1,8 @@
+{
+  "meta": {
+    "title": "ClipForge",
+    "description": "Paste a link, parse and download it, pull the transcript, name it, then cut a sized GIF — one panel."
+  },
+  "panel": "ClipForge",
+  "title": "Workbench"
+}

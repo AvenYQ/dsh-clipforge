@@ -1,0 +1,55 @@
+{
+  "name": "dsh-clipforge",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "ClipForge — 视频工作台：贴链接 → 解析下载 → 文案 → 截取/合并 → GIF",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "lib/",
+    "locale/",
+    "cordis.patch.yml",
+    "icon.svg",
+    "README.md"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-layout",
+        "@deepseek-ai/dsh-client-ui-sidebar"
+      ]
+    }
+  },
+  "license": "MIT",
+  "keywords": [
+    "deepseek",
+    "harness",
+    "dsh",
+    "dsh-plugin",
+    "video",
+    "gif",
+    "transcript",
+    "douyin",
+    "ffmpeg"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AvenYQ/dsh-clipforge.git"
+  },
+  "homepage": "https://github.com/AvenYQ/dsh-clipforge",
+  "bugs": {
+    "url": "https://github.com/AvenYQ/dsh-clipforge/issues"
+  }
+}
