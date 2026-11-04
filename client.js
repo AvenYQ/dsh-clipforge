@@ -15,8 +15,8 @@ window.__ModuleLoader__.load({
 
     const ZH = {
       panel: 'ClipForge',
-      title: 'DSH 工作台',
-      subtitle: '贴链接 → 下载 → 文案 / 起名 → 挑片段做 GIF',
+      title: 'ClipForge',
+      subtitle: '贴链接 → 下载 → 文案 → 截取 / 合并 → GIF',
       statusIdle: '等待输入',
       statusWorking: '正在处理',
       videoMode: '视频台',
@@ -166,7 +166,7 @@ window.__ModuleLoader__.load({
     };
 
     const EN = Object.assign({}, ZH, {
-      title: 'DSH Workbench',
+      title: 'ClipForge',
       statusIdle: 'Idle',
       statusWorking: 'Working',
       card1: 'Input & parse',
@@ -829,6 +829,8 @@ html[data-theme='dark'] .wb-root, html.dark .wb-root, .wb-root.wb-dark {
             audio: quality === 'audio',
             sniff: info?.kind === 'sniff',
             douyin: info?.kind === 'douyin',
+            xhs: info?.kind === 'xhs',
+            generic: info?.kind === 'generic',
           });
           setJob(data.job);
           if (data.job.duration) setEnd(Math.min(6, Math.floor(data.job.duration)));

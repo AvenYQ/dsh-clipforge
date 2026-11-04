@@ -20,6 +20,7 @@ import {
   clipVideo,
   downloadSniffed,
   downloadDouyin,
+  downloadDirect,
   keyframes,
   previewClip,
   keywords,
@@ -34,6 +35,8 @@ import { browserReady, fetchWithBrowser, openInBrowser } from './lib/browser.js'
 import { captureCookies, cookiePathFor } from './lib/cookies.js';
 import { sniffMedia } from './lib/sniff.js';
 import { douyinInfo, isDouyin } from './lib/douyin.js';
+import { xhsInfo, isXhs } from './lib/xhs.js';
+import { genericInfo } from './lib/generic.js';
 
 export const inject = ['webServer'];
 
@@ -383,6 +386,32 @@ export function apply(ctx) {
       const value = url.trim();
       const host = (() => { try { return new URL(value).hostname.replace(/^www\./, ''); } catch { return ''; } })();
 
+      if (isXhs(value)) {
+        try {
+          const info = await xhsInfo(value);
+          return {
+            ok: true,
+            info: {
+              kind: 'xhs',
+              url: value,
+              title: info.title,
+              cleanTitle: cleanTitle(info.title),
+              uploader: '',
+              duration: 0,
+              thumbnail: info.cover,
+              platform: 'XHS',
+              description: info.title,
+              keywords: [],
+              heights: [],
+              hasSubtitles: false,
+              playUrl: info.playUrl,
+            },
+          };
+        } catch (error) {
+          return { ok: false, error: String(error?.message || error), host, canSniff: true };
+        }
+      }
+
       if (isDouyin(value)) {
         try {
           const info = await douyinInfo(value);
@@ -411,6 +440,22 @@ export function apply(ctx) {
 
       try {
         const info = await probe(value);
+        /* yt-dlp 把页面当文章处理时，再试一次通用视频抽取 */
+        if (info.kind === 'text') {
+          try {
+            const generic = await genericInfo(value);
+            return {
+              ok: true,
+              info: {
+                kind: 'generic', url: value, title: generic.title,
+                cleanTitle: cleanTitle(generic.title), uploader: '', duration: 0, thumbnail: '',
+                platform: host.toUpperCase() || 'WEB', description: generic.title,
+                keywords: [], heights: [], hasSubtitles: false,
+                playUrl: generic.playUrl, hls: generic.hls,
+              },
+            };
+          } catch { /* 还是文章，保持原结果 */ }
+        }
         return { ok: true, info };
       } catch (error) {
         const message = String(error?.message || error);
@@ -421,13 +466,37 @@ export function apply(ctx) {
             return { ok: true, info, cookies: true };
           } catch { /* 采集失败就落到浏览器嗅探 */ }
         }
+        /* 通用兜底：直接从页面 HTML 里找 og:video / m3u8 / mp4 */
+        try {
+          const generic = await genericInfo(value);
+          return {
+            ok: true,
+            info: {
+              kind: 'generic',
+              url: value,
+              title: generic.title,
+              cleanTitle: cleanTitle(generic.title),
+              uploader: '',
+              duration: 0,
+              thumbnail: '',
+              platform: host.toUpperCase() || 'WEB',
+              description: generic.title,
+              keywords: [],
+              heights: [],
+              hasSubtitles: false,
+              playUrl: generic.playUrl,
+              hls: generic.hls,
+            },
+          };
+        } catch { /* 页面里也没视频，按原错误返回 */ }
+
         const canSniff = true;
         const needsLogin = /登录|login|sign in|signin|要求授权|403|401/i.test(message) || /^(x|twitter|weibo|xiaohongshu)\./i.test(host);
         return { ok: false, error: message, needsLogin, host, url: value, canSniff };
       }
     },
 
-    async download({ url, quality = 'best', audio = false, sniff = false, douyin = false }) {
+    async download({ url, quality = 'best', audio = false, sniff = false, douyin = false, xhs = false, generic = false }) {
       if (!url) throw new Error('缺少链接');
       await ensureDirs();
       const known = [...jobs.values()].find((job) => job.url === url
@@ -438,7 +507,17 @@ export function apply(ctx) {
       let meta = {};
       let sniffed = null;
       let douyinPlay = '';
-      if (douyin) {
+      let hlsUrl = '';
+      if (generic) {
+        const info = await genericInfo(url);
+        douyinPlay = info.playUrl;
+        if (info.hls) hlsUrl = info.playUrl;
+        meta = { title: info.title, cleanTitle: cleanTitle(info.title), platform: 'WEB', duration: 0 };
+      } else if (xhs) {
+        const info = await xhsInfo(url);
+        douyinPlay = info.playUrl;
+        meta = { title: info.title, cleanTitle: cleanTitle(info.title), platform: 'XHS', duration: 0, thumbnail: info.cover };
+      } else if (douyin) {
         const info = await douyinInfo(url);
         douyinPlay = info.playUrl;
         meta = { title: info.title, cleanTitle: cleanTitle(info.title), platform: 'DOUYIN', duration: info.duration, thumbnail: info.cover };
@@ -490,8 +569,29 @@ export function apply(ctx) {
       const host = (() => { try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return ''; } })();
       const cookieFile = host ? cookiePathFor(host) : '';
       if (cookieFile && fs.existsSync(cookieFile)) job.cookies = cookieFile;
-      const runner = douyinPlay
-        ? downloadDouyin(job, douyinPlay, { onProgress: (stage) => { job.stage = stage; } })
+      const runHls = async () => {
+        job.filePath = path.join(PATHS.video, `${job.id}-${safeSlug(job.title || 'video', job.id)}.mp4`);
+        job.filename = path.basename(job.filePath);
+        job.stage = '拉取 HLS 流';
+        const result = await run(tools().ffmpeg, ['-y', '-i', hlsUrl, '-c', 'copy', '-movflags', '+faststart', job.filePath], { timeout: 1_800_000 });
+        if (result.code !== 0) throw new Error('HLS 拉流失败');
+        job.sizeBytes = fs.statSync(job.filePath).size;
+        job.percent = 100;
+        job.status = 'done';
+        job.stage = '已下载';
+        const out = await run(tools().ffprobe, ['-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', job.filePath]);
+        const secs = Number.parseFloat(out.stdout.trim());
+        if (Number.isFinite(secs)) job.duration = secs;
+        persist();
+        return job;
+      };
+
+      const runner = hlsUrl
+        ? runHls()
+        : douyinPlay
+        ? (meta.platform === 'XHS'
+          ? downloadDirect(job, douyinPlay, { onProgress: (stage) => { job.stage = stage; } })
+          : downloadDouyin(job, douyinPlay, { onProgress: (stage) => { job.stage = stage; } }))
         : sniffed
           ? downloadSniffed(job, sniffed, { onProgress: (stage) => { job.stage = stage; } })
           : download(job);
