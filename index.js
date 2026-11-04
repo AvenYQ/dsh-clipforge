@@ -37,6 +37,7 @@ import { sniffMedia } from './lib/sniff.js';
 import { douyinInfo, isDouyin } from './lib/douyin.js';
 import { xhsInfo, isXhs } from './lib/xhs.js';
 import { genericInfo } from './lib/generic.js';
+import { categoryDir } from './lib/category.js';
 
 export const inject = ['webServer'];
 
@@ -570,7 +571,9 @@ export function apply(ctx) {
       const cookieFile = host ? cookiePathFor(host) : '';
       if (cookieFile && fs.existsSync(cookieFile)) job.cookies = cookieFile;
       const runHls = async () => {
-        job.filePath = path.join(PATHS.video, `${job.id}-${safeSlug(job.title || 'video', job.id)}.mp4`);
+        const dir = await categoryDir(job.title, job.description, PATHS.video);
+        job.dir = dir;
+        job.filePath = path.join(dir, `${job.id}-${safeSlug(job.title || 'video', job.id)}.mp4`);
         job.filename = path.basename(job.filePath);
         job.stage = '拉取 HLS 流';
         const result = await run(tools().ffmpeg, ['-y', '-i', hlsUrl, '-c', 'copy', '-movflags', '+faststart', job.filePath], { timeout: 1_800_000 });
