@@ -274,243 +274,456 @@ window.__ModuleLoader__.load({
     /* ── 样式：群青 / 0 圆角 / 等宽标签 ───────────────────────────────── */
 
     const CSS = `
+/* ── 记号：暖色工具感 / 一屏一个焦点 / 分区靠留白 ─────────────────── */
 .wb-root {
-  --wb-bg: var(--dsw-alias-bg-base, #f8fafc);
+  --wb-bg: var(--dsw-alias-bg-base, #faf9f7);
   --wb-surface: var(--dsw-alias-bg-layer-1, #ffffff);
-  --wb-container: var(--dsw-alias-bg-layer-2, #f1f5f9);
-  --wb-container-2: var(--dsw-alias-bg-layer-3, #e2e8f0);
-  --wb-border: var(--dsw-alias-border-l1, #e2e8f0);
-  --wb-border-strong: var(--dsw-alias-border-l3, #94a3b8);
-  --wb-ink: var(--dsw-alias-label-primary, #0f172a);
-  --wb-ink-2: var(--dsw-alias-label-secondary, #334155);
-  --wb-muted: var(--dsw-alias-label-tertiary, #64748b);
-  --wb-caption: var(--dsw-alias-label-caption, #94a3b8);
-  --wb-primary: var(--dsw-alias-brand-primary, #1d4ed8);
-  --wb-primary-hover: color-mix(in srgb, var(--wb-primary) 82%, white);
-  --wb-primary-ink: var(--dsw-alias-label-primary-inverted, #ffffff);
-  --wb-primary-soft: color-mix(in srgb, var(--wb-primary) 12%, transparent);
-  --wb-ok: #047857;
-  --wb-error: var(--dsw-alias-state-error-primary, #dc2626);
-  --wb-error-soft: #fee2e2;
+  --wb-sunken: var(--dsw-alias-bg-layer-2, #f4f2ef);
+  --wb-sunken-2: var(--dsw-alias-bg-layer-3, #e9e5e0);
+  --wb-line: var(--dsw-alias-border-l1, #e7e3dd);
+  --wb-line-2: var(--dsw-alias-border-l3, #cdc7bf);
+  --wb-ink: var(--dsw-alias-label-primary, #1c1917);
+  --wb-ink-2: var(--dsw-alias-label-secondary, #44403c);
+  --wb-muted: var(--dsw-alias-label-tertiary, #78716c);
+  --wb-caption: var(--dsw-alias-label-caption, #a8a29e);
+  --wb-accent: #bf4d21;
+  --wb-accent-hover: #a84016;
+  --wb-accent-ink: #ffffff;
+  --wb-accent-soft: color-mix(in srgb, var(--wb-accent) 10%, transparent);
+  --wb-accent-line: color-mix(in srgb, var(--wb-accent) 34%, transparent);
+  --wb-ok: #2f7d5b;
+  --wb-danger: var(--dsw-alias-state-error-primary, #b42318);
+  --wb-danger-soft: color-mix(in srgb, var(--wb-danger) 10%, transparent);
+  --wb-r-s: 8px;
+  --wb-r: 12px;
+  --wb-r-l: 16px;
+  --wb-shadow-1: 0 1px 2px color-mix(in srgb, var(--wb-ink) 7%, transparent);
+  --wb-shadow-2: 0 14px 34px -18px color-mix(in srgb, var(--wb-ink) 40%, transparent);
+  --wb-ease: cubic-bezier(.22, 1, .36, 1);
+  --wb-dur: 160ms;
   --wb-font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang SC', 'Helvetica Neue', system-ui, sans-serif;
   --wb-mono: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
+
   flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column;
   background: var(--wb-bg); color: var(--wb-ink); font-family: var(--wb-font);
-  font-size: 13px; line-height: 1.55;
+  font-size: 13.5px; line-height: 1.6; letter-spacing: 0;
+  -webkit-font-smoothing: antialiased;
 }
 .wb-root, .wb-root *, .wb-root *::before, .wb-root *::after { box-sizing: border-box; }
 html[data-theme='dark'] .wb-root, html.dark .wb-root, .wb-root.wb-dark {
-  --wb-ok: #34d399; --wb-error-soft: #3b1d1d;
+  --wb-accent: #e8865a;
+  --wb-accent-hover: #f09a72;
+  --wb-accent-ink: #1c120c;
+  --wb-ok: #6fc29a;
+  --wb-danger: #f97066;
+  --wb-sunken: color-mix(in srgb, var(--dsw-alias-bg-layer-2, #23211f) 100%, transparent);
 }
+.wb-root :focus-visible { outline: 2px solid var(--wb-accent-line); outline-offset: 2px; }
+.wb-root ::selection { background: var(--wb-accent-soft); }
 @keyframes wb-spin { to { transform: rotate(360deg) } }
 .wb-spin { animation: wb-spin 1s linear infinite; }
 @keyframes wb-pulse { 0%, 100% { opacity: .35 } 50% { opacity: 1 } }
 .wb-pulse { animation: wb-pulse 1.6s ease-in-out infinite; }
+@keyframes wb-stripe { from { transform: translateX(0) } to { transform: translateX(-12px) } }
+@keyframes wb-rise { from { opacity: 0; transform: translateY(4px) } to { opacity: 1; transform: none } }
 
-/* 顶栏 */
+/* ── 顶栏 ─────────────────────────────────────────────────────────── */
 .wb-top {
-  flex: none; display: flex; align-items: center; gap: 14px; height: 58px; padding: 0 22px;
-  background: var(--wb-surface); border-bottom: 1px solid var(--wb-border);
+  position: sticky; top: 0; z-index: 20; flex: none;
+  display: flex; align-items: center; gap: 12px; height: 58px; padding: 0 20px;
+  background: color-mix(in srgb, var(--wb-bg) 88%, transparent);
+  backdrop-filter: blur(14px) saturate(1.15);
+  border-bottom: 1px solid color-mix(in srgb, var(--wb-line) 70%, transparent);
 }
-.wb-mark { width: 28px; height: 28px; display: grid; place-items: center; background: var(--wb-primary); color: var(--wb-primary-ink); }
-.wb-brand { display: flex; align-items: baseline; gap: 9px; min-width: 0; }
-.wb-brand-title { font-size: 15px; font-weight: 650; letter-spacing: -.01em; white-space: nowrap; }
-.wb-ver {
-  font-family: var(--wb-mono); font-size: 10px; letter-spacing: .06em; color: var(--wb-muted);
-  border: 1px solid var(--wb-border); padding: 2px 6px; text-transform: uppercase;
+.wb-mark {
+  width: 30px; height: 30px; flex: none; display: grid; place-items: center;
+  border-radius: 9px; background: var(--wb-accent); color: var(--wb-accent-ink);
+  box-shadow: 0 2px 6px -2px var(--wb-accent-line);
 }
+.wb-brand { display: flex; flex-direction: column; gap: 0; min-width: 0; }
+.wb-brand-title { font-size: 14.5px; font-weight: 650; letter-spacing: -.01em; white-space: nowrap; }
+.wb-ver { font-family: var(--wb-mono); font-size: 10px; letter-spacing: .04em; color: var(--wb-caption); }
 .wb-top-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
 
-/* 按钮 */
+/* 步骤轨：唯一的进度语言 */
+.wb-rail { display: flex; align-items: center; gap: 2px; margin-left: 10px; }
+.wb-step {
+  display: inline-flex; align-items: center; gap: 6px; padding: 5px 9px;
+  border-radius: 999px; font-size: 11.5px; color: var(--wb-caption); white-space: nowrap;
+  transition: background var(--wb-dur) var(--wb-ease), color var(--wb-dur) var(--wb-ease);
+}
+.wb-step-n {
+  width: 16px; height: 16px; flex: none; display: grid; place-items: center;
+  border-radius: 50%; font-family: var(--wb-mono); font-size: 9.5px; font-weight: 650;
+  background: var(--wb-sunken); color: var(--wb-muted);
+}
+.wb-step.is-active { background: var(--wb-accent-soft); color: var(--wb-accent); }
+.wb-step.is-active .wb-step-n { background: var(--wb-accent); color: var(--wb-accent-ink); }
+.wb-step.is-done { color: var(--wb-muted); }
+.wb-step.is-done .wb-step-n { background: color-mix(in srgb, var(--wb-ok) 16%, transparent); color: var(--wb-ok); }
+
+/* ── 按钮 ─────────────────────────────────────────────────────────── */
 .wb-btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: 7px; height: 34px; padding: 0 13px;
-  white-space: nowrap; flex: none;
-  font-family: inherit; font-size: 12.5px; cursor: pointer; border: 1px solid var(--wb-border-strong);
-  background: var(--wb-surface); color: var(--wb-ink); border-radius: 0;
-  transition: background .14s ease, border-color .14s ease, color .14s ease;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  height: 32px; padding: 0 12px; flex: none; white-space: nowrap;
+  font-family: inherit; font-size: 12.5px; font-weight: 550; letter-spacing: 0;
+  color: var(--wb-ink); background: var(--wb-sunken); border: 1px solid transparent;
+  border-radius: var(--wb-r-s); cursor: pointer;
+  transition: background var(--wb-dur) var(--wb-ease), color var(--wb-dur) var(--wb-ease),
+    border-color var(--wb-dur) var(--wb-ease), transform 90ms var(--wb-ease);
 }
-.wb-btn:hover:not(:disabled) { background: var(--wb-container); }
-.wb-btn:disabled { cursor: not-allowed; color: var(--wb-caption); border-color: var(--wb-border); background: var(--wb-container); }
-.wb-btn-primary { background: var(--wb-primary); border-color: var(--wb-primary); color: var(--wb-primary-ink); }
-.wb-btn-primary:hover:not(:disabled) { background: var(--wb-primary-hover); border-color: var(--wb-primary-hover); }
-.wb-btn-primary:disabled { background: var(--wb-container-2); border-color: var(--wb-border); color: var(--wb-caption); }
-.wb-btn-ghost { border-color: var(--wb-border); background: transparent; }
-.wb-btn-sm { height: 28px; padding: 0 9px; font-size: 11.5px; }
-.wb-btn-danger { color: var(--wb-error); border-color: var(--wb-error); background: transparent; }
-.wb-btn-danger.is-armed { background: var(--wb-error); color: #fff; }
+.wb-btn svg { flex: none; }
+.wb-btn:hover:not(:disabled) { background: var(--wb-sunken-2); }
+.wb-btn:active:not(:disabled) { transform: translateY(1px); }
+.wb-btn:disabled { cursor: not-allowed; color: var(--wb-caption); background: var(--wb-sunken); opacity: .7; }
+.wb-btn-primary { background: var(--wb-accent); color: var(--wb-accent-ink); }
+.wb-btn-primary:hover:not(:disabled) { background: var(--wb-accent-hover); }
+.wb-btn-primary:disabled {
+  background: var(--wb-sunken); color: var(--wb-caption); opacity: 1;
+}
+.wb-btn-ghost { background: transparent; color: var(--wb-ink-2); }
+.wb-btn-ghost:hover:not(:disabled) { background: var(--wb-sunken); color: var(--wb-ink); }
+.wb-btn-ghost:disabled { background: transparent; }
+.wb-btn-sm { height: 26px; padding: 0 9px; font-size: 11.5px; gap: 5px; border-radius: 7px; }
+.wb-btn-danger { color: var(--wb-danger); background: transparent; }
+.wb-btn-danger:hover:not(:disabled) { background: var(--wb-danger-soft); }
+.wb-btn-danger.is-armed { background: var(--wb-danger); color: #fff; }
+.wb-btn-danger.is-armed:hover { background: color-mix(in srgb, var(--wb-danger) 88%, black); }
+.wb-btn.is-on { background: var(--wb-accent-soft); color: var(--wb-accent); }
+.wb-btn.is-on:hover:not(:disabled) { background: color-mix(in srgb, var(--wb-accent) 16%, transparent); }
 
-/* 布局 */
+/* ── 布局 ─────────────────────────────────────────────────────────── */
 .wb-body {
-  flex: 1 1 auto; min-height: 0; overflow: auto; display: grid; gap: 16px;
-  grid-template-columns: minmax(0, 392px) minmax(0, 1fr); padding: 18px 22px 40px; align-content: start;
+  flex: 1 1 auto; min-height: 0; overflow: auto; width: 100%;
+  display: grid; gap: 20px; align-content: start;
+  grid-template-columns: minmax(0, 404px) minmax(0, 1fr);
+  padding: 20px 20px 56px; max-width: 1500px; margin: 0 auto;
 }
-@media (max-width: 1080px) { .wb-body { grid-template-columns: minmax(0, 1fr); } }
-.wb-col { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+@media (max-width: 1080px) {
+  .wb-body { grid-template-columns: minmax(0, 1fr); padding: 16px 14px 40px; gap: 14px; }
+}
+.wb-col { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.wb-sec-label {
+  display: flex; align-items: center; gap: 8px;
+  margin: 2px 2px -2px; font-size: 11.5px; font-weight: 620; letter-spacing: .02em;
+  color: var(--wb-muted);
+}
+.wb-sec-label::after {
+  content: ''; flex: 1 1 auto; height: 1px;
+  background: color-mix(in srgb, var(--wb-line) 80%, transparent);
+}
 
-/* 卡片 */
-.wb-card { background: var(--wb-surface); border: 1px solid var(--wb-border); }
+/* ── 卡片 ─────────────────────────────────────────────────────────── */
+.wb-card {
+  display: flex; flex-direction: column; min-width: 0;
+  background: var(--wb-surface); border-radius: var(--wb-r-l);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--wb-line) 55%, transparent), var(--wb-shadow-1);
+  transition: box-shadow var(--wb-dur) var(--wb-ease);
+}
+.wb-card.is-active { box-shadow: 0 0 0 1px var(--wb-accent-line), var(--wb-shadow-1); }
+.wb-card.is-idle { box-shadow: 0 0 0 1px color-mix(in srgb, var(--wb-line) 40%, transparent); }
 .wb-card-head {
-  display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--wb-border);
+  display: flex; align-items: center; gap: 10px; padding: 13px 15px 11px;
 }
 .wb-num {
-  width: 20px; height: 20px; flex: none; display: grid; place-items: center;
-  background: var(--wb-primary); color: var(--wb-primary-ink);
-  font-family: var(--wb-mono); font-size: 11px; font-weight: 700;
+  width: 22px; height: 22px; flex: none; display: grid; place-items: center;
+  border-radius: 7px; background: var(--wb-sunken); color: var(--wb-muted);
+  font-family: var(--wb-mono); font-size: 11px; font-weight: 650;
+  transition: background var(--wb-dur) var(--wb-ease), color var(--wb-dur) var(--wb-ease);
 }
-.wb-card-title { font-size: 13.5px; font-weight: 650; letter-spacing: -.005em; }
-.wb-card-note { margin-left: auto; font-family: var(--wb-mono); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--wb-muted); }
-.wb-card-body { padding: 14px; }
+.wb-card.is-active .wb-num { background: var(--wb-accent); color: var(--wb-accent-ink); }
+.wb-card.is-done .wb-num { background: color-mix(in srgb, var(--wb-ok) 15%, transparent); color: var(--wb-ok); }
+.wb-card-title { font-size: 13.5px; font-weight: 620; letter-spacing: -.005em; color: var(--wb-ink); }
+.wb-card-note {
+  margin-left: auto; flex: none; font-size: 11.5px; color: var(--wb-muted);
+  font-variant-numeric: tabular-nums; max-width: 46%; overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap;
+}
+.wb-card-body { padding: 0 15px 15px; min-width: 0; }
 
-/* 通用小字 */
-.wb-mono { font-family: var(--wb-mono); font-variant-numeric: tabular-nums; letter-spacing: .02em; }
-.wb-label { font-family: var(--wb-mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--wb-muted); }
-.wb-hint { font-size: 11.5px; color: var(--wb-muted); line-height: 1.6; }
-.wb-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
-.wb-wrap { flex-wrap: wrap; }
-
-/* 输入 */
+/* ── 表单 ─────────────────────────────────────────────────────────── */
 .wb-input {
-  width: 100%; height: 36px; padding: 0 11px; font-family: var(--wb-mono); font-size: 12.5px;
-  background: var(--wb-surface); color: var(--wb-ink); border: 1px solid var(--wb-border-strong); outline: none; border-radius: 0;
+  width: 100%; height: 34px; padding: 0 11px; min-width: 0;
+  font-family: inherit; font-size: 12.5px; color: var(--wb-ink);
+  background: var(--wb-surface); border: 1px solid var(--wb-line-2);
+  border-radius: var(--wb-r-s); outline: none;
+  transition: border-color var(--wb-dur) var(--wb-ease), box-shadow var(--wb-dur) var(--wb-ease);
 }
-.wb-input::placeholder { color: var(--wb-caption); font-family: var(--wb-font); }
-.wb-input:focus { border-color: var(--wb-primary); box-shadow: inset 0 0 0 1px var(--wb-primary); }
-.wb-textarea { width: 100%; min-height: 96px; resize: vertical; padding: 10px 11px; font-family: var(--wb-font); font-size: 12.5px; line-height: 1.7; background: var(--wb-surface); color: var(--wb-ink); border: 1px solid var(--wb-border-strong); outline: none; }
-.wb-textarea:focus { border-color: var(--wb-primary); box-shadow: inset 0 0 0 1px var(--wb-primary); }
-
-/* 解析结果 */
-.wb-meta { display: flex; gap: 12px; margin-top: 12px; }
-.wb-thumb { width: 104px; height: 58px; flex: none; object-fit: cover; background: var(--wb-container); border: 1px solid var(--wb-border); }
-.wb-meta-body { min-width: 0; display: flex; flex-direction: column; gap: 6px; }
-.wb-meta-title { font-size: 12.5px; font-weight: 600; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.wb-chips { display: flex; flex-wrap: wrap; gap: 5px; }
-.wb-chip { font-family: var(--wb-mono); font-size: 10px; letter-spacing: .05em; padding: 2px 6px; border: 1px solid var(--wb-border); color: var(--wb-muted); text-transform: uppercase; }
-.wb-chip-primary { color: var(--wb-primary); border-color: color-mix(in srgb, var(--wb-primary) 45%, transparent); }
-
-/* 空态 */
-.wb-empty { display: flex; flex-direction: column; align-items: center; gap: 7px; padding: 26px 16px; text-align: center; border: 1px dashed var(--wb-border-strong); }
-.wb-empty-icon { color: var(--wb-caption); }
-.wb-empty-title { font-size: 13px; font-weight: 650; color: var(--wb-ink); }
-.wb-empty-text { font-size: 11.5px; color: var(--wb-muted); line-height: 1.6; max-width: 34em; }
-.wb-empty-page { padding: 34px 12px; }
-
-/* 进度 */
-.wb-bar { position: relative; height: 6px; background: var(--wb-container-2); overflow: hidden; }
-.wb-bar-fill { position: absolute; inset: 0 auto 0 0; background: var(--wb-primary); transition: width .3s ease; }
-.wb-bar-fill.is-live::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(115deg, rgba(255,255,255,.35) 0 6px, transparent 6px 12px); animation: wb-stripe 1s linear infinite; }
-@keyframes wb-stripe { from { transform: translateX(0) } to { transform: translateX(-12px) } }
-
-/* 播放器 */
-.wb-screen { position: relative; background: #0b1120; border: 1px solid var(--wb-border); }
-.wb-video { display: block; width: 100%; max-height: 42vh; background: #0b1120; }
-.wb-screen-empty { display: grid; place-items: center; gap: 8px; min-height: 258px; padding: 24px; text-align: center; color: #94a3b8; }
-.wb-screen-empty strong { color: #e2e8f0; font-size: 13px; font-weight: 600; }
-.wb-tc { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border: 1px solid var(--wb-border); background: var(--wb-container); margin-bottom: 10px; }
-.wb-tc-label { font-family: var(--wb-mono); font-size: 10px; letter-spacing: .08em; color: var(--wb-primary); }
-.wb-tc-now { font-family: var(--wb-mono); font-size: 17px; font-weight: 700; letter-spacing: -.01em; }
-.wb-tc-sep { color: var(--wb-caption); }
-.wb-tc-total { font-family: var(--wb-mono); font-size: 12px; color: var(--wb-muted); }
-.wb-tc-fps { margin-left: auto; font-family: var(--wb-mono); font-size: 10px; letter-spacing: .06em; color: var(--wb-muted); }
-
-/* 键盘条 */
-.wb-keys { display: flex; align-items: center; gap: 14px; padding: 7px 11px; background: #475569; color: #f8fafc; }
-.wb-key { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; }
-.wb-key b { font-family: var(--wb-mono); font-size: 10px; font-weight: 600; padding: 1px 5px; background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.28); }
-.wb-key-right { margin-left: auto; font-family: var(--wb-mono); font-size: 10px; letter-spacing: .06em; color: #cbd5e1; }
-
-/* 选区 */
-.wb-sel { margin-top: 10px; border: 1px solid var(--wb-border); }
-.wb-sel-head { display: flex; align-items: center; gap: 8px; padding: 8px 11px; border-bottom: 1px solid var(--wb-border); }
-.wb-sel-state { font-size: 11.5px; color: var(--wb-ink-2); }
-.wb-sel-delta { margin-left: auto; font-family: var(--wb-mono); font-size: 11px; color: var(--wb-primary); }
-.wb-ticks { display: flex; justify-content: space-between; padding: 4px 10px; border-bottom: 1px solid var(--wb-border); }
-.wb-tick { font-family: var(--wb-mono); font-size: 9.5px; color: var(--wb-caption); }
-
-.wb-trim { position: relative; height: 34px; margin: 10px 12px; touch-action: none; }
-.wb-trim-track { position: absolute; left: 0; right: 0; top: 11px; height: 12px; background: var(--wb-container-2); cursor: pointer; }
-.wb-trim-fill { position: absolute; top: 8px; height: 18px; background: color-mix(in srgb, var(--wb-primary) 78%, white); cursor: grab; touch-action: none; border-left: 2px solid var(--wb-primary); border-right: 2px solid var(--wb-primary); }
-.wb-trim-fill:active { cursor: grabbing; }
-.wb-trim-head { position: absolute; top: 4px; width: 1px; height: 26px; background: var(--wb-ink); opacity: .55; pointer-events: none; }
-.wb-trim-handle { position: absolute; top: 0; width: 10px; height: 34px; margin-left: -5px; background: var(--wb-primary); border: 0; cursor: ew-resize; padding: 0; }
-.wb-trim-handle::after { content: ''; position: absolute; left: 50%; top: 50%; width: 2px; height: 12px; transform: translate(-50%, -50%); background: var(--wb-primary-ink); }
-
-.wb-sel-actions { display: flex; align-items: center; gap: 8px; padding: 9px 11px; border-top: 1px solid var(--wb-border); flex-wrap: wrap; }
-
-/* 输出 */
-.wb-spec { display: flex; align-items: center; gap: 8px; margin-bottom: 9px; }
+.wb-input::placeholder { color: var(--wb-caption); }
+.wb-input:focus { border-color: var(--wb-accent); box-shadow: 0 0 0 3px var(--wb-accent-soft); }
+.wb-input:disabled { color: var(--wb-caption); background: var(--wb-sunken); cursor: not-allowed; }
+.wb-textarea {
+  width: 100%; min-height: 92px; resize: vertical; padding: 9px 11px;
+  font-family: inherit; font-size: 12.5px; line-height: 1.7; color: var(--wb-ink);
+  background: var(--wb-surface); border: 1px solid var(--wb-line-2);
+  border-radius: var(--wb-r-s); outline: none;
+}
+.wb-textarea:focus { border-color: var(--wb-accent); box-shadow: 0 0 0 3px var(--wb-accent-soft); }
 .wb-field {
-  position: relative; display: flex; align-items: stretch; height: 42px;
-  border: 1px solid var(--wb-border-strong); background: var(--wb-surface);
+  position: relative; display: flex; align-items: stretch; height: 36px;
+  background: var(--wb-surface); border: 1px solid var(--wb-line-2); border-radius: var(--wb-r-s);
+  transition: border-color var(--wb-dur) var(--wb-ease), box-shadow var(--wb-dur) var(--wb-ease);
 }
-.wb-field:focus-within { border-color: var(--wb-primary); box-shadow: inset 0 0 0 1px var(--wb-primary); }
+.wb-field:focus-within { border-color: var(--wb-accent); box-shadow: 0 0 0 3px var(--wb-accent-soft); }
 .wb-field-label {
-  display: flex; align-items: center; padding: 0 10px; border-right: 1px solid var(--wb-border);
-  background: var(--wb-container); font-family: var(--wb-mono); font-size: 10px;
-  letter-spacing: .08em; text-transform: uppercase; color: var(--wb-muted);
+  display: flex; align-items: center; padding: 0 10px; flex: none;
+  background: var(--wb-sunken); border-right: 1px solid var(--wb-line);
+  border-radius: 7px 0 0 7px; font-size: 11.5px; color: var(--wb-muted);
 }
 .wb-field select {
-  flex: 1 1 auto; min-width: 0; appearance: none; border: 0; outline: none; padding: 0 34px 0 12px;
-  background: transparent; font-family: var(--wb-font); font-size: 13px; color: var(--wb-ink); cursor: pointer;
+  flex: 1 1 auto; min-width: 0; appearance: none; border: 0; outline: none;
+  padding: 0 30px 0 11px; background: transparent; color: var(--wb-ink);
+  font-family: inherit; font-size: 12.5px; cursor: pointer;
 }
 .wb-field select:disabled { color: var(--wb-caption); cursor: not-allowed; }
 .wb-field::after {
-  content: ''; position: absolute; right: 13px; top: 50%; width: 7px; height: 7px; pointer-events: none;
-  border-right: 1.6px solid var(--wb-muted); border-bottom: 1.6px solid var(--wb-muted);
-  transform: translateY(-70%) rotate(45deg);
+  content: ''; position: absolute; right: 12px; top: 50%; width: 6px; height: 6px;
+  pointer-events: none; border-right: 1.5px solid var(--wb-muted); border-bottom: 1.5px solid var(--wb-muted);
+  transform: translateY(-65%) rotate(45deg);
 }
-.wb-cta { width: 100%; height: 42px; font-size: 13px; }
-.wb-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.wb-cta { width: 100%; height: 38px; font-size: 13px; margin-top: 10px; }
+
+/* ── 小件 ─────────────────────────────────────────────────────────── */
+.wb-mono { font-family: var(--wb-mono); font-variant-numeric: tabular-nums; }
+.wb-label { font-size: 11.5px; color: var(--wb-muted); }
+.wb-hint { font-size: 11.5px; color: var(--wb-muted); line-height: 1.65; }
+.wb-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.wb-wrap { flex-wrap: wrap; }
+.wb-chip {
+  display: inline-flex; align-items: center; gap: 4px; flex: none;
+  padding: 2px 7px; border-radius: 6px; background: var(--wb-sunken);
+  font-size: 11px; color: var(--wb-muted); font-variant-numeric: tabular-nums;
+}
+.wb-chip-primary { background: var(--wb-accent-soft); color: var(--wb-accent); }
+.wb-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+
+/* ── 解析结果 ─────────────────────────────────────────────────────── */
+.wb-meta { display: flex; gap: 12px; margin-top: 12px; }
+.wb-thumb {
+  width: 108px; height: 61px; flex: none; object-fit: cover; display: block;
+  background: var(--wb-sunken); border-radius: 8px;
+}
+.wb-meta-body { min-width: 0; display: flex; flex-direction: column; gap: 6px; justify-content: center; }
+.wb-meta-title {
+  font-size: 12.5px; font-weight: 600; line-height: 1.45; color: var(--wb-ink);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+
+/* ── 空态 ─────────────────────────────────────────────────────────── */
+.wb-empty {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 24px 16px; text-align: center; border-radius: var(--wb-r);
+  border: 1px dashed color-mix(in srgb, var(--wb-line-2) 80%, transparent);
+  color: var(--wb-caption);
+}
+.wb-empty-icon { color: var(--wb-caption); opacity: .8; }
+.wb-empty-title { font-size: 12.5px; font-weight: 600; color: var(--wb-ink-2); }
+.wb-empty-text { font-size: 11.5px; color: var(--wb-muted); line-height: 1.6; max-width: 30em; }
+.wb-empty-page { padding: 40px 12px; }
+
+/* ── 进度 ─────────────────────────────────────────────────────────── */
+.wb-bar { position: relative; height: 4px; border-radius: 999px; background: var(--wb-sunken-2); overflow: hidden; }
+.wb-bar-fill {
+  position: absolute; inset: 0 auto 0 0; border-radius: 999px; background: var(--wb-accent);
+  transition: width .32s var(--wb-ease);
+}
+.wb-bar-fill.is-live::after {
+  content: ''; position: absolute; inset: 0;
+  background: repeating-linear-gradient(115deg, rgba(255,255,255,.38) 0 6px, transparent 6px 12px);
+  animation: wb-stripe 1s linear infinite;
+}
+
+/* ── 播放器 ───────────────────────────────────────────────────────── */
+.wb-tc { display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px; }
+.wb-tc-label { font-size: 11.5px; color: var(--wb-muted); }
+.wb-tc-now { font-family: var(--wb-mono); font-size: 18px; font-weight: 650; letter-spacing: -.02em; color: var(--wb-ink); }
+.wb-tc-sep { color: var(--wb-caption); }
+.wb-tc-total { font-family: var(--wb-mono); font-size: 12.5px; color: var(--wb-muted); }
+.wb-tc-fps { margin-left: auto; font-size: 11.5px; color: var(--wb-muted); }
+.wb-screen {
+  position: relative; border-radius: 14px; overflow: hidden;
+  background: #0c0c0d;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--wb-line) 70%, transparent);
+}
+.wb-screen:has(.wb-screen-empty) { background: var(--wb-sunken); }
+.wb-video { display: block; width: 100%; max-height: 44vh; background: #0c0c0d; }
+.wb-screen-empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px;
+  min-height: 220px; padding: 24px; text-align: center; color: var(--wb-caption);
+}
+.wb-screen-empty strong { color: var(--wb-ink-2); font-size: 12.5px; font-weight: 600; }
+.wb-screen-empty span { font-size: 11.5px; color: var(--wb-muted); }
+
+/* 快捷键条：低调，不抢焦点 */
+.wb-keys {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  margin-top: 10px; padding: 6px 10px; border-radius: 10px; background: var(--wb-sunken);
+}
+.wb-key { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: var(--wb-muted); }
+.wb-key b {
+  font-family: var(--wb-mono); font-size: 10.5px; font-weight: 600; color: var(--wb-ink-2);
+  background: var(--wb-surface); border-radius: 5px; padding: 1px 5px; box-shadow: var(--wb-shadow-1);
+}
+.wb-key-right { margin-left: auto; font-family: var(--wb-mono); font-size: 11px; color: var(--wb-muted); }
+
+/* ── 选区 ─────────────────────────────────────────────────────────── */
+.wb-sel { margin-top: 12px; border-radius: var(--wb-r); background: var(--wb-sunken); padding: 2px; }
+.wb-sel-head { display: flex; align-items: center; gap: 7px; padding: 8px 10px 4px; }
+.wb-sel-head svg { color: var(--wb-muted); }
+.wb-sel-state { font-size: 11.5px; color: var(--wb-ink-2); font-variant-numeric: tabular-nums; }
+.wb-sel-delta { margin-left: auto; font-family: var(--wb-mono); font-size: 11.5px; color: var(--wb-accent); }
+.wb-ticks { display: flex; justify-content: space-between; padding: 0 14px; }
+.wb-tick { font-family: var(--wb-mono); font-size: 9.5px; color: var(--wb-caption); }
+
+.wb-trim { position: relative; height: 40px; margin: 4px 14px 2px; touch-action: none; }
+.wb-trim-track {
+  position: absolute; left: 0; right: 0; top: 16px; height: 8px; border-radius: 999px;
+  background: var(--wb-sunken-2); cursor: pointer;
+}
+.wb-trim-fill {
+  position: absolute; top: 12px; height: 16px; border-radius: 5px;
+  background: color-mix(in srgb, var(--wb-accent) 20%, transparent);
+  box-shadow: inset 0 0 0 1.5px var(--wb-accent);
+  cursor: grab; touch-action: none;
+}
+.wb-trim-fill:active { cursor: grabbing; }
+.wb-trim-head { position: absolute; top: 10px; width: 1.5px; height: 20px; border-radius: 2px; background: var(--wb-ink); opacity: .45; pointer-events: none; }
+.wb-trim-handle {
+  position: absolute; top: 8px; width: 14px; height: 24px; margin-left: -7px; padding: 0;
+  background: transparent; border: 0; cursor: ew-resize;
+}
+.wb-trim-handle::after {
+  content: ''; position: absolute; left: 50%; top: 50%; width: 4px; height: 20px;
+  transform: translate(-50%, -50%); border-radius: 999px;
+  background: var(--wb-accent); box-shadow: 0 1px 3px color-mix(in srgb, var(--wb-accent) 50%, transparent);
+}
+.wb-sel-actions { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding: 8px 10px; }
+
+/* ── 输出 ─────────────────────────────────────────────────────────── */
+.wb-spec { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+.wb-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 @media (max-width: 760px) { .wb-tiles { grid-template-columns: 1fr; } }
 .wb-tile {
-  border: 1px solid var(--wb-border); padding: 12px; display: flex; flex-direction: column; gap: 9px;
-  height: 100%; min-height: 0;
+  display: flex; flex-direction: column; gap: 10px; min-height: 0; height: 100%;
+  padding: 12px; border-radius: var(--wb-r); background: var(--wb-sunken);
 }
-/* 两块的按钮统一压到底边对齐，中间多出来的空间留给参数区，不让按钮缩在上面 */
-.wb-tile > .wb-btn { margin-top: auto; }
-.wb-tile-params { display: flex; flex-wrap: wrap; gap: 6px; }
+.wb-tile > .wb-btn { margin-top: auto; width: 100%; }
 .wb-tile-head { display: flex; align-items: flex-start; gap: 9px; }
-.wb-tile-icon { width: 30px; height: 30px; display: grid; place-items: center; background: var(--wb-primary-soft); color: var(--wb-primary); flex: none; }
-.wb-tile-title { font-size: 12.5px; font-weight: 650; }
+.wb-tile-icon {
+  width: 28px; height: 28px; flex: none; display: grid; place-items: center;
+  border-radius: 8px; background: var(--wb-surface); color: var(--wb-accent);
+  box-shadow: var(--wb-shadow-1);
+}
+.wb-tile-title { font-size: 12.5px; font-weight: 620; color: var(--wb-ink); }
 .wb-tile-sub { font-size: 11px; color: var(--wb-muted); line-height: 1.5; }
-.wb-tile-chip { margin-left: auto; font-family: var(--wb-mono); font-size: 9.5px; letter-spacing: .06em; padding: 2px 5px; border: 1px solid var(--wb-border); color: var(--wb-muted); white-space: nowrap; }
-.wb-tile .wb-btn { width: 100%; }
+.wb-tile-chip {
+  margin-left: auto; flex: none; font-size: 10.5px; color: var(--wb-muted);
+  background: var(--wb-surface); border-radius: 5px; padding: 2px 6px; white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.wb-tile-params { display: flex; flex-wrap: wrap; gap: 6px; }
+.wb-tile .wb-input { background: var(--wb-surface); }
 
-.wb-vault { margin-top: 12px; border: 1px solid var(--wb-border); }
-.wb-vault-head { display: flex; align-items: center; gap: 9px; padding: 10px 12px; background: var(--wb-container); border-bottom: 1px solid var(--wb-border); }
-.wb-vault-title { font-size: 12px; font-weight: 650; }
-.wb-vault-count { margin-left: auto; font-family: var(--wb-mono); font-size: 10px; color: var(--wb-muted); }
-.wb-item { display: flex; align-items: center; gap: 9px; padding: 9px 12px; border-bottom: 1px solid var(--wb-border); }
-.wb-item:last-child { border-bottom: 0; }
-.wb-item-name { font-size: 11.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 22em; }
-.wb-vault-file { font-family: var(--wb-mono); font-size: 10px; color: var(--wb-caption); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 24em; }
-.wb-item-meta { font-family: var(--wb-mono); font-size: 10px; color: var(--wb-muted); }
-.wb-item-actions { margin-left: auto; display: flex; gap: 6px; }
+/* ── 产物 / 队列 ──────────────────────────────────────────────────── */
+.wb-vault { margin-top: 12px; border-radius: var(--wb-r); background: var(--wb-sunken); overflow: hidden; }
+.wb-vault-head { display: flex; align-items: center; gap: 7px; padding: 9px 11px; color: var(--wb-muted); }
+.wb-vault-title { font-size: 11.5px; font-weight: 600; color: var(--wb-ink-2); }
+.wb-vault-count { margin-left: auto; font-size: 11px; color: var(--wb-muted); font-variant-numeric: tabular-nums; }
+.wb-item {
+  display: flex; align-items: center; gap: 9px; padding: 8px 11px;
+  background: var(--wb-surface); border-top: 1px solid color-mix(in srgb, var(--wb-line) 60%, transparent);
+}
+.wb-item-name { font-size: 12px; color: var(--wb-ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wb-vault-file { font-family: var(--wb-mono); font-size: 10.5px; color: var(--wb-caption); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 26em; }
+.wb-item-meta { font-family: var(--wb-mono); font-size: 11px; color: var(--wb-muted); flex: none; font-variant-numeric: tabular-nums; }
+.wb-item-actions { margin-left: auto; display: flex; gap: 4px; flex: none; }
+.wb-queue { display: flex; flex-direction: column; gap: 6px; margin-top: 2px; }
+.wb-queue-row { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 9px; background: var(--wb-sunken); }
 
-/* 队列 */
-.wb-queue { display: flex; flex-direction: column; gap: 6px; }
-.wb-queue-row { display: flex; align-items: center; gap: 8px; padding: 7px 9px; border: 1px solid var(--wb-border); background: var(--wb-container); }
+/* ── 页签（模式 / 视图） ──────────────────────────────────────────── */
+.wb-tabs { display: inline-flex; gap: 2px; padding: 2px; border-radius: 9px; background: var(--wb-sunken); }
+.wb-tab {
+  height: 26px; padding: 0 10px; border: 0; border-radius: 7px; background: transparent;
+  color: var(--wb-muted); font-family: inherit; font-size: 11.5px; font-weight: 550;
+  cursor: pointer; white-space: nowrap;
+  transition: background var(--wb-dur) var(--wb-ease), color var(--wb-dur) var(--wb-ease);
+}
+.wb-tab:hover:not(:disabled):not(.is-on) { color: var(--wb-ink); }
+.wb-tab.is-on { background: var(--wb-surface); color: var(--wb-ink); box-shadow: var(--wb-shadow-1); }
+.wb-tab:disabled { opacity: .4; cursor: not-allowed; }
 
-/* 文案 */
-.wb-tabs { display: inline-flex; border: 1px solid var(--wb-border); }
-.wb-tab { height: 26px; padding: 0 10px; font-family: var(--wb-mono); font-size: 10.5px; letter-spacing: .04em; background: var(--wb-surface); color: var(--wb-muted); border: 0; border-right: 1px solid var(--wb-border); cursor: pointer; }
-.wb-tab:last-child { border-right: 0; }
-.wb-tab.is-on { background: var(--wb-primary); color: var(--wb-primary-ink); }
-.wb-tab:disabled { opacity: .45; cursor: not-allowed; }
-.wb-doc { margin: 0; max-height: 260px; overflow: auto; padding: 11px 12px; white-space: pre-wrap; word-break: break-word; font-family: var(--wb-font); font-size: 12.5px; line-height: 1.72; color: var(--wb-ink-2); border: 1px solid var(--wb-border); background: var(--wb-container); }
-.wb-turn { border: 1px solid var(--wb-border); padding: 9px 11px; }
-.wb-turn + .wb-turn { margin-top: 7px; }
-.wb-turn-head { display: flex; align-items: center; gap: 7px; margin-bottom: 4px; }
-.wb-turn-time { font-family: var(--wb-mono); font-size: 10px; color: var(--wb-muted); }
+/* ── 文段 ─────────────────────────────────────────────────────────── */
+.wb-doc {
+  margin: 0; max-height: 264px; overflow: auto; padding: 11px 12px;
+  border-radius: 10px; background: var(--wb-sunken);
+  white-space: pre-wrap; word-break: break-word; font-family: var(--wb-font);
+  font-size: 12.5px; line-height: 1.72; color: var(--wb-ink-2);
+}
+.wb-turn { padding: 9px 11px; border-radius: 10px; background: var(--wb-sunken); }
+.wb-turn + .wb-turn { margin-top: 6px; }
+.wb-turn-head { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
+.wb-turn-time { font-family: var(--wb-mono); font-size: 10.5px; color: var(--wb-muted); }
 .wb-turn-src { font-size: 12.5px; line-height: 1.7; color: var(--wb-ink-2); }
-.wb-turn-dst { font-size: 12.5px; line-height: 1.7; margin-top: 3px; color: var(--wb-ink); }
+.wb-turn-dst { font-size: 12.5px; line-height: 1.7; margin-top: 2px; color: var(--wb-ink); }
 .wb-turn-dst.is-pending { color: var(--wb-caption); }
 
-.wb-error { display: flex; align-items: center; gap: 8px; padding: 9px 11px; border: 1px solid var(--wb-error); background: var(--wb-error-soft); color: var(--wb-error); font-size: 12px; }
-.wb-notice { display: flex; gap: 8px; padding: 9px 11px; border: 1px solid var(--wb-border-strong); background: var(--wb-container); font-size: 12px; color: var(--wb-ink-2); }
+/* ── 提示条 ───────────────────────────────────────────────────────── */
+.wb-error {
+  display: flex; align-items: center; gap: 7px; padding: 9px 11px; border-radius: 10px;
+  background: var(--wb-danger-soft); color: var(--wb-danger); font-size: 12px;
+}
+.wb-notice {
+  display: flex; gap: 8px; padding: 10px 11px; border-radius: 10px;
+  background: var(--wb-sunken); color: var(--wb-ink-2); font-size: 12px;
+}
+.wb-hit { animation: wb-pulse 1.2s var(--wb-ease) 2; background: var(--wb-accent-soft); border-radius: 4px; }
 
-.wb-paras { display: flex; flex-direction: column; gap: 7px; max-height: 46vh; overflow: auto; }
-.wb-para { display: flex; gap: 8px; font-size: 12.5px; line-height: 1.7; color: var(--wb-ink-2); }
-.wb-para-n { flex: none; width: 30px; text-align: right; font-family: var(--wb-mono); font-size: 10px; color: var(--wb-caption); padding-top: 3px; }
+/* ── 文稿台 ───────────────────────────────────────────────────────── */
+.wb-reader-source { display: flex; flex-direction: column; gap: 8px; max-height: 58vh; overflow: auto; padding-right: 4px; }
+.wb-sec-title { font-size: 12.5px; font-weight: 650; color: var(--wb-ink); margin: 4px 0 2px; }
+.wb-sec-sub { font-size: 12px; font-weight: 600; color: var(--wb-ink-2); margin: 2px 0; }
+.wb-para-line { margin: 0 0 6px; font-size: 12.5px; line-height: 1.78; color: var(--wb-ink-2); }
+.wb-out-oneline {
+  font-size: 14px; font-weight: 600; line-height: 1.55; color: var(--wb-ink);
+  padding: 10px 12px; border-radius: 10px; background: var(--wb-accent-soft);
+  border-left: 2px solid var(--wb-accent);
+}
+.wb-out-paragraph { font-size: 12.5px; line-height: 1.75; color: var(--wb-ink-2); margin: 10px 0 0; }
+.wb-out-section { padding: 10px 0; border-top: 1px solid color-mix(in srgb, var(--wb-line) 60%, transparent); }
+.wb-out-section strong { display: block; font-size: 12.5px; margin: 4px 0 2px; color: var(--wb-ink); }
+.wb-quote {
+  display: flex; flex-direction: column; gap: 6px; width: 100%; text-align: left;
+  padding: 10px 12px; margin-bottom: 6px; border: 0; border-left: 2px solid var(--wb-accent-line);
+  border-radius: 0 10px 10px 0; background: var(--wb-sunken); cursor: pointer;
+  transition: background var(--wb-dur) var(--wb-ease);
+}
+.wb-quote:hover { background: var(--wb-sunken-2); }
+.wb-quote-text { font-size: 12.5px; line-height: 1.7; color: var(--wb-ink); }
+.wb-quote-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.wb-mm-node { display: flex; flex-direction: column; }
+.wb-mm-line {
+  display: inline-flex; align-items: center; gap: 6px; padding: 3px 6px; margin: 1px 0;
+  align-self: flex-start; border: 0; border-radius: 6px; background: transparent;
+  font-family: inherit; font-size: 12px; color: var(--wb-ink-2); cursor: default; text-align: left;
+}
+.wb-mm-line.is-leaf { cursor: pointer; color: var(--wb-ink); }
+.wb-mm-line.is-leaf:hover { background: var(--wb-sunken); }
+.wb-mm-pid { font-family: var(--wb-mono); font-size: 10px; color: var(--wb-caption); }
+
+/* ── 动效开关 ─────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .wb-root *, .wb-root *::before, .wb-root *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+@media (max-width: 1240px) {
+  .wb-ver { display: none; }
+}
+@media (max-width: 1180px) {
+  .wb-rail .wb-step:not(.is-active) { display: none; }
+}
+@media (max-width: 720px) {
+  .wb-top { padding: 0 12px; gap: 8px; }
+  .wb-head-actions .wb-btn span { display: none; }
+}
 `;
 
     function StyleSheet() {
@@ -519,10 +732,10 @@ html[data-theme='dark'] .wb-root, html.dark .wb-root, .wb-root.wb-dark {
 
     /* ── 通用块 ───────────────────────────────────────────────────────── */
 
-    function Card({ n, title, note, children, bodyStyle }) {
+    function Card({ n, title, note, state, children, bodyStyle }) {
       return h(
         'section',
-        { className: 'wb-card' },
+        { className: `wb-card${state ? ' is-' + state : ''}` },
         h(
           'header',
           { className: 'wb-card-head' },
@@ -1158,27 +1371,60 @@ html[data-theme='dark'] .wb-root, html.dark .wb-root, .wb-root.wb-dark {
         h('button', { type: 'button', className: `wb-tab${textMode ? ' is-on' : ''}`, onClick: () => { setModeOverride('text'); setError(''); } }, t('textMode')),
       );
 
+      /* ── 阶段状态：编号、卡片状态、顶栏步骤轨都从这里取 ────────── */
+      const stage = {
+        link: Boolean(card),
+        download: ready,
+        transcript: Boolean(transcript?.text),
+        trim: ready && selDelta > 0 && selDelta < duration - 0.05,
+        exported: artifacts.some((item) => item.kind !== 'SRC'),
+        merged: Boolean((job?.merges || []).length),
+      };
+      const stepList = textMode
+        ? [
+          { n: '1', label: '输入', done: Boolean(readerDoc) },
+          { n: '2', label: '原文', done: Boolean(readerDoc) },
+          { n: '3', label: '产物', done: Boolean(textRecord?.summary || textRecord?.quotes || textRecord?.mindmap) },
+        ]
+        : [
+          { n: '1', label: '链接', done: stage.link },
+          { n: '2', label: '下载', done: stage.download },
+          { n: '3', label: '文案', done: stage.transcript },
+          { n: '4', label: '选区', done: stage.trim },
+          { n: '5', label: '导出', done: stage.exported },
+          { n: '6', label: '拼接', done: stage.merged },
+        ];
+      const activeStep = stepList.findIndex((step) => !step.done);
+
       const inputCard = h(
         Card,
-        { n: '1', title: t('card1'), note: busy === 'parse'
+        { n: '①', title: t('card1'), state: stage.link ? 'done' : 'active', note: busy === 'parse'
           ? t('parsing')
           : textMode
-            ? (readerDoc ? (readerDoc.source.type === 'url' ? 'URL' : 'TEXT') : t('waitParse'))
-            : (!hasInput ? t('waitParse') : (info?.platform || t('detectedVideo'))) },
+            ? (readerDoc ? `${readerDoc.meta.charCount} 字` : '等待输入')
+            : (info?.platform || (hasInput ? t('detectedVideo') : '等待链接')) },
         h(
           'div',
           { className: 'wb-row' },
-          h('input', {
-            className: 'wb-input',
-            value: inputValue,
-            placeholder: textMode ? t('textPlaceholder') : t('urlPlaceholder'),
-            spellCheck: false,
-            onChange: (event) => setInputValue(event.target.value),
-            onKeyDown: (event) => { if (event.key === 'Enter' && !textMode) parse(); },
-          }),
+          textMode
+            ? h('textarea', {
+              className: 'wb-textarea',
+              value: inputValue,
+              placeholder: '贴正文或文章链接，至少 40 字',
+              spellCheck: false,
+              onChange: (event) => setInputValue(event.target.value),
+            })
+            : h('input', {
+              className: 'wb-input',
+              value: inputValue,
+              placeholder: '粘贴视频链接，回车解析',
+              spellCheck: false,
+              onChange: (event) => setInputValue(event.target.value),
+              onKeyDown: (event) => { if (event.key === 'Enter') parse(); },
+            }),
           h(
             'button',
-            { type: 'button', className: 'wb-btn wb-btn-primary', onClick: parse, disabled: busy === 'parse' || !hasInput },
+            { type: 'button', className: `wb-btn ${stage.link ? 'wb-btn-ghost' : 'wb-btn-primary'}`, onClick: parse, disabled: busy === 'parse' || !hasInput },
             busy === 'parse' ? Glyph.spinner(14) : Glyph.radar(14),
             h('span', null, busy === 'parse' ? t('parsing') : (textMode ? t('analyzeText') : t('parse'))),
           ),
@@ -1192,18 +1438,20 @@ html[data-theme='dark'] .wb-root, html.dark .wb-root, .wb-root.wb-dark {
             : h('span', { className: 'wb-chip' }, t('waitParse')),
           h('span', { className: 'wb-label', style: { marginLeft: 'auto' } }, hasInput ? t('autoDetect') : ''),
         ),
-        h(
-          'div',
-          { className: 'wb-row wb-wrap', style: { marginTop: '10px' } },
-          h('span', { className: 'wb-label' }, t('supported')),
-          ['Bilibili', 'YouTube', 'X / Twitter', '播客 / 直链'].map((name) => h('span', { key: name, className: 'wb-chip' }, name)),
-        ),
+        textMode
+          ? null
+          : h(
+            'div',
+            { className: 'wb-row wb-wrap', style: { marginTop: '10px' } },
+            h('span', { className: 'wb-label' }, t('supported')),
+            ['Bilibili', 'YouTube', 'X / Twitter', '播客 / 直链'].map((name) => h('span', { key: name, className: 'wb-chip' }, name)),
+          ),
         !textMode && urlInText && urlInText !== url.trim()
           ? h('div', { className: 'wb-row wb-wrap', style: { marginTop: '8px' } },
             h('span', { className: 'wb-chip wb-chip-primary' }, '已从分享文案中提取链接'),
             h('span', { className: 'wb-mono wb-hint', style: { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '22em' } }, urlInText))
           : null,
-        h('p', { className: 'wb-hint', style: { margin: '9px 0 0' } }, t('supportNote')),
+        textMode ? null : h('p', { className: 'wb-hint', style: { margin: '9px 0 0' } }, t('supportNote')),
         error
           ? h('div', { className: 'wb-error', style: { marginTop: '10px' } },
             Glyph.warn(14),
@@ -1301,7 +1549,7 @@ html[data-theme='dark'] .wb-root, html.dark .wb-root, .wb-root.wb-dark {
       const heights = (info?.heights || []).slice(0, 6);
       const downloadCard = h(
         Card,
-        { n: '2', title: t('card2'), note: job ? (job.status === 'done' ? t('done') : 'STREAM_SRC // RUNNING') : 'STREAM_SRC // IDLE' },
+        { n: '②', title: t('card2'), state: stage.download ? 'done' : (stage.link ? 'active' : 'idle'), note: job ? (job.status === 'done' ? (job.sizeLabel || t('done')) : `${Math.round(progress)}%`) : '等待链接' },
         hasSource
           ? h(
             'div',
@@ -1311,8 +1559,7 @@ html[data-theme='dark'] .wb-root, html.dark .wb-root, .wb-root.wb-dark {
               { className: 'wb-spec' },
               h('span', { className: 'wb-label' }, t('quality')),
               h('span', { className: 'wb-chip' }, 'H.264 / AAC'),
-              h('span', { className: 'wb-chip wb-chip-primary' }, `${heights.length || 1} TRACKS`),
-              h('span', { className: 'wb-label', style: { marginLeft: 'auto' } }, 'READY'),
+              h('span', { className: 'wb-chip' }, `${heights.length || 1} 档清晰度`),
             ),
             h(
               'div',
@@ -1339,7 +1586,7 @@ html[data-theme='dark'] .wb-root, html.dark .wb-root, .wb-root.wb-dark {
               'button',
               {
                 type: 'button',
-                className: 'wb-btn wb-btn-primary wb-cta',
+                className: `wb-btn wb-cta ${stage.download ? 'wb-btn-ghost' : 'wb-btn-primary'}`,
                 style: { marginTop: '10px' },
                 onClick: startDownload,
                 disabled: busy === 'download' || !url.trim(),
@@ -1387,7 +1634,7 @@ html[data-theme='dark'] .wb-root, html.dark .wb-root, .wb-root.wb-dark {
 
       const transcriptCard = h(
         Card,
-        { n: '3', title: t('card3'), note: `${t('engine')} · Whisper Local` },
+        { n: '③', title: t('card3'), state: stage.transcript ? 'done' : (stage.download ? 'active' : 'idle'), note: transcript?.text ? `${transcript.turns?.length || 0} 句` : (ready ? '字幕优先 · 本地转写' : '待下载') },
         job
           ? h(
             'div',
@@ -1451,16 +1698,16 @@ html[data-theme='dark'] .wb-root, html.dark .wb-root, .wb-root.wb-dark {
 
       const playerCard = h(
         Card,
-        { n: '4', title: t('card4'), note: ready ? t('viewIdle') : t('viewIdle') },
-        h(
+        { n: '④', title: t('card4'), state: stage.trim ? 'done' : (stage.download ? 'active' : 'idle'), note: ready ? `${clock(start)} – ${clock(end)}` : '待下载' },
+        ready ? h(
           'div',
           { className: 'wb-tc' },
           h('span', { className: 'wb-tc-label' }, t('tc')),
           h('span', { className: 'wb-tc-now' }, clockMs(now)),
           h('span', { className: 'wb-tc-sep' }, '/'),
           h('span', { className: 'wb-tc-total' }, clockMs(duration)),
-          h('span', { className: 'wb-tc-fps' }, ready ? `${t('channel')} · AUTO` : t('noSignal')),
-        ),
+          h('span', { className: 'wb-tc-fps' }, `片长 ${clock(duration)}`),
+        ) : null,
         h(
           'div',
           { className: 'wb-screen' },
@@ -1500,15 +1747,15 @@ html[data-theme='dark'] .wb-root, html.dark .wb-root, .wb-root.wb-dark {
               h('span', { style: { fontSize: '11.5px' } }, t('playerEmptyBody')),
             ),
         ),
-        h(
+        ready ? h(
           'div',
           { className: 'wb-keys' },
           h('span', { className: 'wb-key' }, h('b', null, t('spacePlay')), t('spacePlayLabel')),
           h('span', { className: 'wb-key' }, h('b', null, 'I / O'), t('ioHint')),
           h('span', { className: 'wb-key' }, h('b', null, '← / →'), t('arrowsHint')),
           h('span', { className: 'wb-key-right' }, `${Math.round(selDelta * 10) / 10}s / ${clock(duration)}`),
-        ),
-        h(
+        ) : null,
+        ready ? h(
           'div',
           { className: 'wb-sel' },
           h(
@@ -1553,20 +1800,20 @@ html[data-theme='dark'] .wb-root, html.dark .wb-root, .wb-root.wb-dark {
           h(
             'div',
             { className: 'wb-sel-actions', style: { borderTop: '0' } },
-            h('button', { type: 'button', className: 'wb-btn wb-btn-primary wb-btn-sm', disabled: !ready, onClick: togglePreview }, previewing ? t('stopPreview') : t('previewSel')),
-            h('button', { type: 'button', className: `wb-btn wb-btn-sm${loop ? ' wb-btn-primary' : ' wb-btn-ghost'}`, disabled: !ready, onClick: () => setLoop((value) => !value) }, loop ? t('loopOn') : t('loopOff')),
-            h('button', { type: 'button', className: `wb-btn wb-btn-sm${snap ? ' wb-btn-primary' : ' wb-btn-ghost'}`, disabled: !ready, onClick: () => setSnap((value) => !value) }, snap ? t('snapOn') : t('snapOff')),
+            h('button', { type: 'button', className: 'wb-btn wb-btn-sm', disabled: !ready, onClick: togglePreview }, previewing ? t('stopPreview') : t('previewSel')),
+            h('button', { type: 'button', className: `wb-btn wb-btn-sm${loop ? ' is-on' : ' wb-btn-ghost'}`, disabled: !ready, onClick: () => setLoop((value) => !value) }, loop ? t('loopOn') : t('loopOff')),
+            h('button', { type: 'button', className: `wb-btn wb-btn-sm${snap ? ' is-on' : ' wb-btn-ghost'}`, disabled: !ready, onClick: () => setSnap((value) => !value) }, snap ? t('snapOn') : t('snapOff')),
             h('span', { className: 'wb-label', style: { marginLeft: 'auto' } },
               `${t('trimHead', { n: `${start.toFixed(1)}s` })} · ${t('trimTail', { n: `${Math.max(0, duration - end).toFixed(1)}s` })}`),
           ),
-        ),
+        ) : h('p', { className: 'wb-hint', style: { margin: '10px 2px 0' } }, '下载完成后可以在这里预览、打点、选区间。'),
         playBlocked ? h('div', { className: 'wb-hint', style: { marginTop: '8px' } }, t('playBlocked')) : null,
         previewSrc ? h('div', { className: 'wb-hint', style: { marginTop: '8px' } }, t('previewHint', { a: clock(start), b: clock(end) })) : null,
       );
 
       const outputCard = h(
         Card,
-        { n: '5', title: t('card5'), note: 'FFmpeg · libx264 / palettegen' },
+        { n: '⑤', title: t('card5'), state: stage.exported ? 'done' : (stage.trim ? 'active' : 'idle'), note: `${artifacts.length} 个产物` },
         h(
           'div',
           { className: 'wb-tiles' },
@@ -1584,7 +1831,7 @@ html[data-theme='dark'] .wb-root, html.dark .wb-root, .wb-root.wb-dark {
             ),
             h(
               'button',
-              { type: 'button', className: 'wb-btn wb-btn-primary', disabled: !ready || busy === 'clip', onClick: buildClip },
+              { type: 'button', className: `wb-btn ${stage.trim ? 'wb-btn-primary' : ''}`, disabled: !ready || busy === 'clip', onClick: buildClip },
               clipState?.status === 'running' ? Glyph.spinner(14) : Glyph.download(14),
               h('span', null, ready ? t('mp4Action') : `${t('mp4Action')} ${t('needRange')}`),
             ),
@@ -1624,7 +1871,7 @@ html[data-theme='dark'] .wb-root, html.dark .wb-root, .wb-root.wb-dark {
             ),
             h(
               'button',
-              { type: 'button', className: 'wb-btn wb-btn-primary', disabled: !ready || busy === 'gif', onClick: buildGif },
+              { type: 'button', className: 'wb-btn', disabled: !ready || busy === 'gif', onClick: buildGif },
               gifState?.status === 'running' ? Glyph.spinner(14) : Glyph.gif(14),
               h('span', null, ready ? t('gifAction') : `${t('gifAction')} ${t('needRange')}`),
             ),
@@ -1638,8 +1885,8 @@ html[data-theme='dark'] .wb-root, html.dark .wb-root, .wb-root.wb-dark {
         gifState?.status === 'done'
           ? h(
             'div',
-            { className: 'wb-item', style: { marginTop: '10px', border: '1px solid var(--wb-border)' } },
-            h('img', { src: gifState.url, alt: '', style: { width: '92px', border: '1px solid var(--wb-border)' } }),
+            { className: 'wb-item', style: { marginTop: '10px', borderRadius: '10px', overflow: 'hidden' } },
+            h('img', { src: gifState.url, alt: '', style: { width: '92px', borderRadius: '8px', display: 'block' } }),
             h('div', { style: { minWidth: 0 } },
               h('div', { className: 'wb-item-name' }, gifState.filename),
               h('div', { className: 'wb-item-meta' }, `${gifState.width || '原'}px · ${gifState.fps}fps · ${gifState.sizeLabel}`)),
@@ -1690,7 +1937,7 @@ html[data-theme='dark'] .wb-root, html.dark .wb-root, .wb-root.wb-dark {
 
       const mergeCard = h(
         Card,
-        { n: '6', title: t('card6'), note: t('stage', { n: ranges.length }) },
+        { n: '⑥', title: t('card6'), state: stage.merged ? 'done' : (ranges.length ? 'active' : 'idle'), note: ranges.length ? `${ranges.length} 段` : '尚未加入' },
         h(
           'div',
           { className: 'wb-row', style: { marginBottom: '10px' } },
@@ -1713,7 +1960,6 @@ html[data-theme='dark'] .wb-root, html.dark .wb-root, .wb-root.wb-dark {
           : h(EmptyBlock, { icon: Glyph.layers(22), title: t('mergeTitle'), text: t('mergeBody') }),
         mergeState?.status === 'running' ? h('div', { className: 'wb-hint', style: { marginTop: '8px' } }, mergeState.progress || '…') : null,
         mergeState?.status === 'error' ? h('div', { className: 'wb-error', style: { marginTop: '8px' } }, mergeState.error) : null,
-        h('div', { className: 'wb-hint wb-mono', style: { marginTop: '10px', letterSpacing: '.06em' } }, `[ ${t('stage', { n: ranges.length })} ] · [ ${t('concat')} ]`),
       );
 
       /* ── 文稿台（数据来自 dsh-reader） ─────────────────────────── */
@@ -1757,7 +2003,7 @@ html[data-theme='dark'] .wb-root, html.dark .wb-root, .wb-root.wb-dark {
 
       const textSourceCard = h(
         Card,
-        { n: '2', title: '原文', note: readerDoc ? `${readerDoc.meta.charCount} 字 · ${flatParagraphs.length} 段` : '' },
+        { n: '②', title: '原文', state: readerDoc ? 'done' : 'idle', note: readerDoc ? `${readerDoc.meta.charCount} 字 · ${flatParagraphs.length} 段` : '等待正文' },
         readerDoc
           ? h('div', { className: 'wb-reader-source' }, renderSections(readerDoc.sections || []))
           : h(EmptyBlock, { icon: Glyph.subtitles(20), title: '先贴一段正文或链接', text: '支持 Markdown 标题、中文章节标记；链接会自动抽正文。' }),
@@ -1771,7 +2017,7 @@ html[data-theme='dark'] .wb-root, html.dark .wb-root, .wb-root.wb-dark {
           null,
           h('div', { className: 'wb-out-oneline' }, data.oneLine),
           h('p', { className: 'wb-out-paragraph' }, data.paragraph),
-          h('div', { className: 'wb-label', style: { margin: '12px 0 6px' } }, 'BY SECTION'),
+          h('div', { className: 'wb-label', style: { margin: '14px 0 6px' } }, '按章节'),
           (data.bySection || []).map((item, index) => h(
             'div',
             { key: index, className: 'wb-out-section' },
@@ -1853,7 +2099,7 @@ html[data-theme='dark'] .wb-root, html.dark .wb-root, .wb-root.wb-dark {
 
       const textResultCard = h(
         Card,
-        { n: '3', title: '分析', note: readerDoc?.meta.title || '' },
+        { n: '③', title: '分析', state: (textRecord?.summary || textRecord?.quotes || textRecord?.mindmap) ? 'done' : (readerDoc ? 'active' : 'idle'), note: readerDoc?.meta.title || '待生成' },
         h(
           'div',
           { className: 'wb-row wb-wrap', style: { marginBottom: '10px' } },
@@ -1893,6 +2139,20 @@ html[data-theme='dark'] .wb-root, html.dark .wb-root, .wb-root.wb-dark {
         textRecord?.error ? h('div', { className: 'wb-error', style: { marginTop: '10px' } }, textRecord.error) : null,
       );
 
+      const rail = h(
+        'div',
+        { className: 'wb-rail' },
+        stepList.map((step, index) => h(
+          'span',
+          {
+            key: step.n,
+            className: `wb-step${step.done ? ' is-done' : index === activeStep ? ' is-active' : ''}`,
+          },
+          h('span', { className: 'wb-step-n' }, step.done ? '✓' : step.n),
+          h('span', null, step.label),
+        )),
+      );
+
       return h(
         'div',
         { className: 'wb-root' },
@@ -1903,20 +2163,33 @@ html[data-theme='dark'] .wb-root, html.dark .wb-root, .wb-root.wb-dark {
           h('span', { className: 'wb-mark' }, Glyph.movie(17)),
           h('div', { className: 'wb-brand' },
             h('span', { className: 'wb-brand-title' }, t('title')),
-            h('span', { className: 'wb-ver' }, 'v2.0 · local')),
+            h('span', { className: 'wb-ver' }, jobTitle || (textMode ? t('textMode') : t('videoMode')))),
+          rail,
           h('div', { className: 'wb-top-right' },
             renderModeSwitch(),
-            h('button', { type: 'button', className: 'wb-btn wb-btn-ghost wb-btn-sm', disabled: !job, onClick: () => job && call('reveal', { id: job.id, kind: 'video' }).catch(() => {}) }, Glyph.folder(13), t('openFinder')),
-            h('button', { type: 'button', className: `wb-btn wb-btn-sm ${confirmClear ? 'wb-btn-danger is-armed' : 'wb-btn-ghost'}`, disabled: !job && !info && !url && !textRecord, onClick: clearBoard }, Glyph.trash(13), confirmClear ? t('clearConfirm') : t('clear'))),
+            h('button', {
+              type: 'button',
+              className: 'wb-btn wb-btn-ghost wb-btn-sm',
+              disabled: !job,
+              onClick: () => job && call('reveal', { id: job.id, kind: 'video' }).catch(() => {}),
+            }, Glyph.folder(13), t('openFinder')),
+            h('button', {
+              type: 'button',
+              className: `wb-btn wb-btn-sm ${confirmClear ? 'wb-btn-danger is-armed' : 'wb-btn-ghost'}`,
+              disabled: !job && !info && !url && !textRecord,
+              onClick: clearBoard,
+            }, Glyph.trash(13), confirmClear ? t('clearConfirm') : t('clear'))),
         ),
         h(
           'div',
           { className: 'wb-body' },
           h('div', { className: 'wb-col' },
+            h('div', { className: 'wb-sec-label' }, textMode ? '输入' : '素材'),
             inputCard,
             textMode ? textSourceCard : downloadCard,
             textMode ? null : transcriptCard),
           h('div', { className: 'wb-col' },
+            h('div', { className: 'wb-sec-label' }, textMode ? '产物' : '剪辑与导出'),
             textMode ? textResultCard : playerCard,
             textMode ? null : outputCard,
             textMode ? null : mergeCard),
