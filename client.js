@@ -340,9 +340,9 @@ html[data-theme='dark'] .wb-root, html.dark .wb-root, .wb-root.wb-dark {
   border-radius: 9px; background: var(--wb-accent); color: var(--wb-accent-ink);
   box-shadow: 0 2px 6px -2px var(--wb-accent-line);
 }
-.wb-brand { display: flex; flex-direction: column; gap: 0; min-width: 0; }
+.wb-brand { display: flex; flex-direction: column; gap: 0; min-width: 0; flex: 0 1 auto; }
 .wb-brand-title { font-size: 14.5px; font-weight: 650; letter-spacing: -.01em; white-space: nowrap; }
-.wb-ver { font-family: var(--wb-mono); font-size: 10px; letter-spacing: .04em; color: var(--wb-caption); }
+.wb-ver { font-family: var(--wb-mono); font-size: 10px; letter-spacing: .04em; color: var(--wb-caption); max-width: 26em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .wb-top-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
 
 /* 步骤轨：唯一的进度语言 */
