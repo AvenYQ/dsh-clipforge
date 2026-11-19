@@ -1,6 +1,6 @@
 {
   "name": "dsh-clipforge",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "description": "ClipForge — 视频工作台：贴链接 → 解析下载 → 文案 → 截取/合并 → GIF",
   "exports": {
