@@ -47,3 +47,9 @@
 2. 根节点补 `width: 100%; max-width: 100%; min-width: 0; overflow: hidden`，顶栏去掉 `sticky`，各横向容器补 `min-width: 0`，任何情况下都不许画出自己的槽位。
 
 另：侧栏开关在 DSH 里的默认快捷键是 ⌘B（`sidebar.left.toggle`），即使按钮被挡住也能靠它回来。
+
+## 2026-11-19 修正之二：macOS 红绿灯压住品牌区
+
+macOS 上侧栏收起时，布局给侧栏的宽度是 0（见 layout 里 `collapsedWidth = drawer || darwin || windowsTitlebar ? 0 : 56`），面板直接贴到窗口左边，红绿灯就画在面板顶栏上。
+
+修法：面板挂载时量自己离窗口左边的距离，`data-platform` 为 darwin 且不足 78px 时，按差值给顶栏加左内边距；窗口缩放、侧栏开合同步复测（`ResizeObserver` + `resize`）。侧栏展开时面板左移已超过 78px，自动不加。
