@@ -332,7 +332,10 @@ html[data-theme='dark'] .wb-root, html.dark .wb-root, .wb-root.wb-dark {
 /* ── 顶栏 ─────────────────────────────────────────────────────────── */
 .wb-top {
   flex: none; min-width: 0;
-  display: flex; align-items: center; gap: 12px; height: 56px; padding: 0 20px;
+  display: flex; align-items: center; gap: 12px; height: 56px;
+  padding: 0 20px 0 calc(20px + var(--dsh-frame-leading-clearance, 0px));
+  /* 与侧栏列的收放同一条曲线、同一个时长：两者叠加后位移单调，不会先右后又左 */
+  transition: padding-left var(--ds-transition-duration-slow, 300ms) var(--ds-ease-in-out, cubic-bezier(.4, 0, .2, 1));
   background: var(--wb-bg);
   border-bottom: 1px solid color-mix(in srgb, var(--wb-line) 70%, transparent);
 }
@@ -725,7 +728,7 @@ html[data-theme='dark'] .wb-root, html.dark .wb-root, .wb-root.wb-dark {
   .wb-rail { display: none; }
 }
 @container wb (max-width: 640px) {
-  .wb-top { padding: 0 12px; gap: 8px; }
+  .wb-top { padding: 0 12px 0 calc(12px + var(--dsh-frame-leading-clearance, 0px)); gap: 8px; }
   .wb-top-right .wb-btn span { display: none; }
 }
 `;
@@ -862,10 +865,8 @@ html[data-theme='dark'] .wb-root, html.dark .wb-root, .wb-root.wb-dark {
       const [textRecord, setTextRecord] = useState(null);
       const [textTab, setTextTab] = useState('digest');
       const [loginPrompt, setLoginPrompt] = useState(null);
-      const [trafficPad, setTrafficPad] = useState(0);
 
       const videoRef = useRef(null);
-      const rootRef = useRef(null);
       const hydrated = useRef(false);
 
       /* 视频台和文稿台各用各的输入，互不干扰 */
@@ -886,30 +887,6 @@ html[data-theme='dark'] .wb-root, html.dark .wb-root, .wb-root.wb-dark {
           || job.clip?.status === 'running' || job.merge?.status === 'running'
           || job.transcript?.translating),
       );
-
-      /* macOS 的红绿灯画在窗口左上角。侧栏收起时面板会贴到窗口边缘，
-         两者会撞在一起，所以量一下面板离窗口左边有多近，不够 78px 就补上。 */
-      useEffect(() => {
-        const measure = () => {
-          const node = rootRef.current;
-          if (!node) return;
-          const darwin = document.documentElement.dataset.platform === 'darwin'
-            || /Mac/i.test(navigator.platform || '');
-          if (!darwin) { setTrafficPad(0); return; }
-          const left = node.getBoundingClientRect().left;
-          setTrafficPad(Math.max(0, Math.round(78 - left)));
-        };
-        measure();
-        const raf = window.requestAnimationFrame(measure);
-        const observer = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(measure) : null;
-        if (observer && rootRef.current) observer.observe(rootRef.current);
-        window.addEventListener('resize', measure);
-        return () => {
-          window.cancelAnimationFrame(raf);
-          if (observer) observer.disconnect();
-          window.removeEventListener('resize', measure);
-        };
-      }, [textMode]);
 
       /* 恢复现场 */
       useEffect(() => {
@@ -2185,11 +2162,11 @@ html[data-theme='dark'] .wb-root, html.dark .wb-root, .wb-root.wb-dark {
 
       return h(
         'div',
-        { className: 'wb-root', ref: rootRef },
+        { className: 'wb-root' },
         h(StyleSheet),
         h(
           'header',
-          { className: 'wb-top', style: trafficPad ? { paddingLeft: `${trafficPad + 16}px` } : undefined },
+          { className: 'wb-top' },
           h('span', { className: 'wb-mark' }, Glyph.movie(17)),
           h('div', { className: 'wb-brand' },
             h('span', { className: 'wb-brand-title' }, t('title')),

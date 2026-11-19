@@ -53,3 +53,21 @@
 macOS 上侧栏收起时，布局给侧栏的宽度是 0（见 layout 里 `collapsedWidth = drawer || darwin || windowsTitlebar ? 0 : 56`），面板直接贴到窗口左边，红绿灯就画在面板顶栏上。
 
 修法：面板挂载时量自己离窗口左边的距离，`data-platform` 为 darwin 且不足 78px 时，按差值给顶栏加左内边距；窗口缩放、侧栏开合同步复测（`ResizeObserver` + `resize`）。侧栏展开时面板左移已超过 78px，自动不加。
+
+## 2026-11-19 修正之三：侧栏收起时顶栏让位（最终方案）
+
+前两版都不对：先是硬编码 78px（方向、数值都错），再是量 rect 后补 padding（布局跳变在先，等于「先左后右」）。
+
+最终做法——用框架发布的带宽，纯 CSS，无 JS：
+
+```css
+.wb-top {
+  padding: 0 20px 0 calc(20px + var(--dsh-frame-leading-clearance, 0px));
+  transition: padding-left var(--ds-transition-duration-slow, 300ms) var(--ds-ease-in-out, cubic-bezier(.4, 0, .2, 1));
+}
+```
+
+- 目标值由 DSH 依布局状态直接写出（收起时 160px，全屏 84px，非 darwin 为空 → 0px），不是测出来的，所以不存在「先跳到左边再补」。
+- 过渡曲线与时长跟侧栏列收放用的是同一条 token（`--ds-transition-duration-slow` / `--ds-ease-in-out`），两者叠加后位移单调。
+
+实测（1318×800，侧栏 264 收起）：品牌起点 284 → 180，约 300ms，逐帧递减无回摆；展开反向下单调递增。收起后品牌距红绿灯右缘 72px、距开关座右缘 116px，实测相交面积为 0。
