@@ -304,7 +304,8 @@ window.__ModuleLoader__.load({
   --wb-font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang SC', 'Helvetica Neue', system-ui, sans-serif;
   --wb-mono: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
 
-  flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column;
+  flex: 1 1 auto; min-width: 0; min-height: 0; overflow: hidden;
+  display: flex; flex-direction: column;
   background: var(--wb-bg); color: var(--wb-ink); font-family: var(--wb-font);
   font-size: 13.5px; line-height: 1.6; letter-spacing: 0;
   -webkit-font-smoothing: antialiased;
@@ -329,10 +330,9 @@ html[data-theme='dark'] .wb-root, html.dark .wb-root, .wb-root.wb-dark {
 
 /* ── 顶栏 ─────────────────────────────────────────────────────────── */
 .wb-top {
-  position: sticky; top: 0; z-index: 20; flex: none;
-  display: flex; align-items: center; gap: 12px; height: 58px; padding: 0 20px;
-  background: color-mix(in srgb, var(--wb-bg) 88%, transparent);
-  backdrop-filter: blur(14px) saturate(1.15);
+  flex: none; min-width: 0;
+  display: flex; align-items: center; gap: 12px; height: 56px; padding: 0 20px;
+  background: var(--wb-bg);
   border-bottom: 1px solid color-mix(in srgb, var(--wb-line) 70%, transparent);
 }
 .wb-mark {
@@ -340,13 +340,13 @@ html[data-theme='dark'] .wb-root, html.dark .wb-root, .wb-root.wb-dark {
   border-radius: 9px; background: var(--wb-accent); color: var(--wb-accent-ink);
   box-shadow: 0 2px 6px -2px var(--wb-accent-line);
 }
-.wb-brand { display: flex; flex-direction: column; gap: 0; min-width: 0; flex: 0 1 auto; }
+.wb-brand { display: flex; flex-direction: column; gap: 0; min-width: 0; flex: 0 1 auto; overflow: hidden; }
 .wb-brand-title { font-size: 14.5px; font-weight: 650; letter-spacing: -.01em; white-space: nowrap; }
 .wb-ver { font-family: var(--wb-mono); font-size: 10px; letter-spacing: .04em; color: var(--wb-caption); max-width: 26em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.wb-top-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.wb-top-right { margin-left: auto; display: flex; align-items: center; gap: 8px; min-width: 0; flex: none; }
 
 /* 步骤轨：唯一的进度语言 */
-.wb-rail { display: flex; align-items: center; gap: 2px; margin-left: 10px; }
+.wb-rail { display: flex; align-items: center; gap: 2px; margin-left: 10px; min-width: 0; overflow: hidden; }
 .wb-step {
   display: inline-flex; align-items: center; gap: 6px; padding: 5px 9px;
   border-radius: 999px; font-size: 11.5px; color: var(--wb-caption); white-space: nowrap;
@@ -719,6 +719,9 @@ html[data-theme='dark'] .wb-root, html.dark .wb-root, .wb-root.wb-dark {
 }
 @media (max-width: 1180px) {
   .wb-rail .wb-step:not(.is-active) { display: none; }
+}
+@media (max-width: 860px) {
+  .wb-rail { display: none; }
 }
 @media (max-width: 720px) {
   .wb-top { padding: 0 12px; gap: 8px; }
