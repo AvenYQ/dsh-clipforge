@@ -304,7 +304,8 @@ window.__ModuleLoader__.load({
   --wb-font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang SC', 'Helvetica Neue', system-ui, sans-serif;
   --wb-mono: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
 
-  flex: 1 1 auto; min-width: 0; min-height: 0; overflow: hidden;
+  flex: 1 1 auto; width: 100%; max-width: 100%; min-width: 0; min-height: 0; overflow: hidden;
+  container-type: inline-size; container-name: wb;
   display: flex; flex-direction: column;
   background: var(--wb-bg); color: var(--wb-ink); font-family: var(--wb-font);
   font-size: 13.5px; line-height: 1.6; letter-spacing: 0;
@@ -399,7 +400,7 @@ html[data-theme='dark'] .wb-root, html.dark .wb-root, .wb-root.wb-dark {
   grid-template-columns: minmax(0, 404px) minmax(0, 1fr);
   padding: 20px 20px 56px; max-width: 1500px; margin: 0 auto;
 }
-@media (max-width: 1080px) {
+@container wb (max-width: 900px) {
   .wb-body { grid-template-columns: minmax(0, 1fr); padding: 16px 14px 40px; gap: 14px; }
 }
 .wb-col { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
@@ -602,7 +603,7 @@ html[data-theme='dark'] .wb-root, html.dark .wb-root, .wb-root.wb-dark {
 /* ── 输出 ─────────────────────────────────────────────────────────── */
 .wb-spec { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
 .wb-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-@media (max-width: 760px) { .wb-tiles { grid-template-columns: 1fr; } }
+@container wb (max-width: 620px) { .wb-tiles { grid-template-columns: 1fr; } }
 .wb-tile {
   display: flex; flex-direction: column; gap: 10px; min-height: 0; height: 100%;
   padding: 12px; border-radius: var(--wb-r); background: var(--wb-sunken);
@@ -714,18 +715,18 @@ html[data-theme='dark'] .wb-root, html.dark .wb-root, .wb-root.wb-dark {
 @media (prefers-reduced-motion: reduce) {
   .wb-root *, .wb-root *::before, .wb-root *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
-@media (max-width: 1240px) {
+@container wb (max-width: 960px) {
   .wb-ver { display: none; }
 }
-@media (max-width: 1180px) {
+@container wb (max-width: 1000px) {
   .wb-rail .wb-step:not(.is-active) { display: none; }
 }
-@media (max-width: 860px) {
+@container wb (max-width: 780px) {
   .wb-rail { display: none; }
 }
-@media (max-width: 720px) {
+@container wb (max-width: 640px) {
   .wb-top { padding: 0 12px; gap: 8px; }
-  .wb-head-actions .wb-btn span { display: none; }
+  .wb-top-right .wb-btn span { display: none; }
 }
 `;
 
